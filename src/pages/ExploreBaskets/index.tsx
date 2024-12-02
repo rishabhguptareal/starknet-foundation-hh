@@ -1,86 +1,70 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import BasketCard from './BasketCard';
+import React, { useState, useEffect } from 'react';
 
-const popularBaskets = [
-  {
-    name: "DeFi Titans",
-    description: "A collection of leading DeFi protocols with proven track records.",
-    performance: "+24.5%",
-    investors: 1234,
-    risk: "Medium" as const,
-    tokens: ["UNI", "AAVE", "MKR", "SNX"]
-  },
-  {
-    name: "Web3 Gaming",
-    description: "Exposure to the fastest growing gaming tokens in the ecosystem.",
-    performance: "+32.1%",
-    investors: 892,
-    risk: "High" as const,
-    tokens: ["AXS", "SAND", "MANA", "ENJ"]
-  },
-  {
-    name: "Blue Chip Crypto",
-    description: "A stable portfolio of established cryptocurrencies.",
-    performance: "+18.7%",
-    investors: 2156,
-    risk: "Low" as const,
-    tokens: ["BTC", "ETH", "BNB", "SOL"]
-  },
-  {
-    name: "AI & Data",
-    description: "Tokens powering the future of artificial intelligence.",
-    performance: "+45.2%",
-    investors: 567,
-    risk: "High" as const,
-    tokens: ["OCEAN", "FET", "AGIX", "NMR"]
-  },
-  {
-    name: "Yield Maximizer",
-    description: "Optimized for generating consistent yield returns.",
-    performance: "+15.3%",
-    investors: 1543,
-    risk: "Medium" as const,
-    tokens: ["CAKE", "CRV", "CVX", "COMP"]
-  },
-  {
-    name: "Layer 2 Growth",
-    description: "Focused on scaling solutions and Layer 2 protocols.",
-    performance: "+28.9%",
-    investors: 789,
-    risk: "Medium" as const,
-    tokens: ["OP", "ARB", "MATIC", "IMX"]
-  }
-];
+const BasketList = () => {
+  const [baskets, setBaskets] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-export default function ExploreBaskets() {
+  useEffect(() => {
+    const fetchBaskets = async () => {
+      try {
+        const response = await fetch('https://starkbasket.humaads.live/baskets');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setBaskets(data.data);
+        setIsLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setIsLoading(false);
+      }
+    };
+
+    fetchBaskets();
+  }, []);
+
+  if (isLoading) return <div className="p-4 text-center">Loading...</div>;
+  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
+
   return (
-    <div className="py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Explore Popular Baskets
-          </h1>
-          <p className="text-xl text-white/70">
-            Discover community-curated token baskets with proven track records
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {popularBaskets.map((basket, index) => (
-            <BasketCard key={index} {...basket} />
-          ))}
-        </motion.div>
-      </div>
+    <div className="space-y-4 p-4 bg-space-black/50 backdrop-blur-lg rounded-lg">
+      <h1 className="text-2xl font-bold mb-4 bg-gradient-cosmic text-transparent bg-clip-text">Basket List</h1>
+      {baskets.map((basket) => (
+        <div key={basket._id} className="border rounded-lg p-4 shadow-md bg-white/10 backdrop-blur-lg">
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-xl font-semibold text-white">{basket.name} ({basket.symbol})</h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4 text-white/80">
+            <div>
+              <p className="font-bold">Basket Address:</p>
+              <p className="truncate text-sm">{basket.basket}</p>
+            </div>
+            <div>
+              <p className="font-bold">Tokens:</p>
+              {basket.tokens.map((token, index) => (
+                <p key={token} className="truncate text-sm">
+                  {index + 1}. {token}
+                </p>
+              ))}
+            </div>
+            <div>
+              <p className="font-bold">Weights:</p>
+              {basket.weights.map((weight, index) => (
+                <p key={index} className="text-sm">Token {index + 1}: {weight}%</p>
+              ))}
+            </div>
+            <div>
+              <p className="font-bold">Whitelisted:</p>
+              {basket.whitelisted.map((address) => (
+                <p key={address} className="truncate text-sm">{address}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
-}
+};
+
+export default BasketList;

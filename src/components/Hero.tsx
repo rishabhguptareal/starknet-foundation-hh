@@ -1,8 +1,15 @@
 import React from 'react';
 import { Bot } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export default function Hero() {
+  const navigate = useNavigate();
+
+  const handleCreateBasketClick = () => {
+    navigate('/create-basket');
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32">
@@ -43,6 +50,7 @@ export default function Hero() {
               className="group inline-flex items-center px-8 py-4 rounded-lg bg-gradient-cosmic text-white font-medium shadow-xl shadow-neon-pink/20 hover:shadow-neon-pink/30 transition-shadow backdrop-blur-lg"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={handleCreateBasketClick}
             >
               <Bot className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
               Create Your Basket

@@ -7,6 +7,8 @@ import Background from './components/Background';
 import Footer from './components/Footer';
 import CreateBasket from './pages/CreateBasket';
 import ExploreBaskets from './pages/ExploreBaskets';
+import Chat from './pages/Chat';
+import BuyBasket from './pages/BuyBasket';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
           } />
           <Route path="/create-basket" element={<CreateBasket />} />
           <Route path="/explore" element={<ExploreBaskets />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/buy-basket" element={<BuyBasket />} />
         </Routes>
         <Footer />
       </div>
